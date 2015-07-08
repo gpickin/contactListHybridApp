@@ -51,13 +51,19 @@ function DatabaseConfigService() {
 		},
 		
 		preloadData: function() {
+		var deferredArray = [];
 		
 			for (var i = 0; i < 20; i++){
 				if ( typeof dummyDataArray[i].photoURL === 'undefined') {
 					dummyDataArray[i].photoURL = app.contactFormUI.getPhotoURL(); 
 				}
-				app.contactService.save( dummyDataArray[i] );
+				deferredArray.push(app.contactService.save( dummyDataArray[i] ));
 			}
+			if ( deferredArray.length > 0 ){
+				$.when.apply( null, deferredArray ).done( function(){
+					app.ui.goHome();
+				});
+			}		
 		},
 		
 		dropContactTable: function(){
